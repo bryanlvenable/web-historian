@@ -39,3 +39,20 @@ exports.isURLArchived = function(){
 
 exports.downloadUrls = function(){
 };
+exports.goIntoFileAndReadIt = function(fileName, callback){
+  var results = "hello";
+  var p = exports.paths.archivedSites + fileName;
+  // Open the file
+
+  fs.open(p,'r+', function(){
+    fs.readFile(p, "utf-8",function (err, data) {
+
+      if (err) throw err;
+      if(data){
+        callback(data);
+
+      }
+    });
+  });
+};
+
