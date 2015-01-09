@@ -5,8 +5,33 @@ var actions = {
   'GET': function(res,code,resp){
     sendResponse(res,code,resp);
   },
-  'POST': function(){},
-  'OPTIONS': function(){}
+  'POST': function(request, code, response){
+    // code = 302;
+    var inSite = false;
+    // check sites.txt for the url that was sent
+    helpers.isUrlInList(request.url, function(found){
+      if(found){// if it is there
+        // Check to see if it is archived
+        helpers.isUrlArchived(request.url, function(archived){
+        // if it is archived
+        if(archived){
+            // serve the archive file
+          helpers.sendRedirect(response, request.url, code);
+        } else{
+          // if it is not there send it to loading.html
+          helpers.sendRedirect(response, '/loading.html', code);
+        }
+      });
+
+      }else{// if not in sites.txt add it to sites.txt
+        helpers.addUrlToList(request.url, function(){
+          console.log("Added to list, hooray!");
+        });
+        // redirect to loading.html
+        helpers.sendRedirect(response, '/loading.html', code);
+      }
+    });
+  }
 };
 
 var sendResponse = function(response,statusCode,resp){

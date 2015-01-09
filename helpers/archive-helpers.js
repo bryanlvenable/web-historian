@@ -25,20 +25,42 @@ exports.initialize = function(pathsObj){
 // The following function names are provided to you to suggest how you might
 // modularize your code. Keep it clean!
 
-exports.readListOfUrls = function(){
+exports.readListOfUrls = function(callback){
+  fs.readFile(exports.paths.list, function(err, sites) {
+    sites = sites.toString().split('\n');
+    if( callback ){
+      callback(sites);
+    }
+  });
 };
 
-exports.isUrlInList = function(){
+exports.isUrlInList = function(url, callback){
+  exports.readListOfUrls(function(sites) {
+    var found = _.any(sites, function(site, i) {
+      return site.match(url)
+    });
+    callback(found);
+  });
 };
 
-exports.addUrlToList = function(){
+exports.addUrlToList = function(url, callback){
+  // We will append submitted sites here
+  fs.appendFile(exports.paths.list, url+'\n', function(err, file){
+    callback();
+  });
 };
 
-exports.isURLArchived = function(){
+exports.isUrlArchived = function(url, callback){
+  var sitePath =  path.join(exports.paths.archivedSites, url);
+
+  fs.exists(sitePath, function(exists) {
+    callback(exists);
+  });
 };
 
 exports.downloadUrls = function(){
 };
+
 exports.goIntoFileAndReadIt = function(fileName, callback){
   var results = "hello";
   var p = exports.paths.archivedSites + fileName;
@@ -55,4 +77,11 @@ exports.goIntoFileAndReadIt = function(fileName, callback){
     });
   });
 };
+
+exports.sendRedirect = function(response, location, status){
+  status = status || 302;
+  response.writeHead(status, {Location: location});
+  response.end();
+};
+
 
