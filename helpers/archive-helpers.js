@@ -2,6 +2,7 @@ var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
 
+
 /*
  * You will need to reuse the same paths many times over in the course of this sprint.
  * Consider using the `paths` object below to store frequently used file paths. This way,
@@ -36,6 +37,7 @@ exports.readListOfUrls = function(callback){
 
 exports.isUrlInList = function(url, callback){
   exports.readListOfUrls(function(sites) {
+    console.log("reading list of URLs");
     var found = _.any(sites, function(site, i) {
       return site.match(url)
     });
@@ -61,9 +63,8 @@ exports.isUrlArchived = function(url, callback){
 exports.downloadUrls = function(){
 };
 
-exports.goIntoFileAndReadIt = function(fileName, callback){
-  var results = "hello";
-  var p = exports.paths.archivedSites + fileName;
+exports.goIntoFileAndReadIt = function(p, callback){
+  //var p = exports.paths.archivedSites + fileName;
   // Open the file
 
   fs.open(p,'r+', function(){
@@ -71,6 +72,7 @@ exports.goIntoFileAndReadIt = function(fileName, callback){
 
       if (err) throw err;
       if(data){
+        console.log("this is data");
         callback(data);
 
       }
@@ -83,5 +85,7 @@ exports.sendRedirect = function(response, location, status){
   response.writeHead(status, {Location: location});
   response.end();
 };
+
+
 
 
